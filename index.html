@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Presentación académica del Taller Módulo MLP: regresión y clasificación con redes neuronales superficiales." />
+  <meta name="theme-color" content="#080b10" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23080b10'/%3E%3Ccircle cx='16' cy='16' r='6' fill='none' stroke='%2322d3ee' stroke-width='2.5'/%3E%3C/svg%3E" />
+  <title>Taller Módulo MLP — Regresión y Clasificación</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Subtle scientific coordinate grid backdrop -->
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="bg-glow" aria-hidden="true"></div>
+
+  <!-- Top Progress Track (segmented by speaker blocks) -->
+  <div class="progress-track" role="progressbar" aria-valuemin="1" aria-valuemax="10" aria-valuenow="1" aria-label="Progreso de la presentación">
+    <div class="progress-fill" id="progressFill"></div>
+    <div class="progress-markers" aria-hidden="true">
+      <span class="block-divider" style="left: 40%" title="Cambio a Estudiante 2 (Slide 5)"></span>
+      <span class="block-divider" style="left: 60%" title="Cambio a Estudiante 3 (Slide 7)"></span>
+      <span class="block-divider" style="left: 70%" title="Regreso a Estudiante 1 (Slide 8)"></span>
+    </div>
+  </div>
+
+  <!-- Minimal Top HUD -->
+  <header class="hud-top">
+    <div class="hud-left">
+      <button class="hud-brand" id="openOverviewBtn" type="button" title="Vista general de diapositivas (Tecla G)">
+        <span class="brand-dot"></span>
+        <span class="brand-label">ML · DECK</span>
+      </button>
+      <span class="hud-divider" aria-hidden="true"></span>
+      <button class="slide-counter-btn" id="slideCounterBtn" type="button" title="Ir a una diapositiva (Tecla G)">
+        <span class="mono" id="slideCounter">01 / 10</span>
+        <span class="slide-section-name" id="slideSectionName">Presentación</span>
+      </button>
+    </div>
+
+    <div class="hud-right">
+      <!-- Speaker Indicator Pill -->
+      <div class="speaker-pill" id="speakerPill" data-speaker="1" title="Expositor asignado a esta diapositiva">
+        <span class="speaker-dot"></span>
+        <span class="speaker-name" id="speakerName">Estudiante 1</span>
+        <span class="speaker-window" id="speakerWindow">Carolina Dorado</span>
+      </div>
+
+      <!-- Optional 5-Minute Turn Timer -->
+      <div class="timer-pill" id="timerPill" data-state="idle">
+        <span class="timer-display mono" id="timerDisplay" title="Cronómetro de turno (5:00 por estudiante)">05:00</span>
+        <button class="timer-btn" id="timerToggleBtn" type="button" aria-label="Iniciar o pausar cronómetro (Tecla P)" title="Iniciar / Pausar (P)">
+          <svg class="icon-play" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+            <path d="M4.5 3.25a.75.75 0 0 1 1.14-.64l7.5 4.75a.75.75 0 0 1 0 1.28l-7.5 4.75A.75.75 0 0 1 4.5 12.75V3.25Z" />
+          </svg>
+          <svg class="icon-pause" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+            <path d="M4.75 3a.75.75 0 0 0-.75.75v8.5a.75.75 0 0 0 1.5 0v-8.5A.75.75 0 0 0 4.75 3Zm6.5 0a.75.75 0 0 0-.75.75v8.5a.75.75 0 0 0 1.5 0v-8.5A.75.75 0 0 0 11.25 3Z" />
+          </svg>
+        </button>
+        <button class="timer-btn" id="timerResetBtn" type="button" aria-label="Reiniciar cronómetro a 5 minutos (Tecla R)" title="Reiniciar 05:00 (R)">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M2.5 8a5.5 5.5 0 1 1 1.4 3.66" />
+            <path d="M2.5 12.5V8.5h4" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Theme & Fullscreen Utilities -->
+      <div class="hud-actions">
+        <button class="icon-btn" id="themeToggleBtn" type="button" aria-label="Cambiar tema claro/oscuro (Tecla T)" title="Cambiar tema (T)">
+          <svg class="icon-sun" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true">
+            <circle cx="8" cy="8" r="2.75" />
+            <path d="M8 1.5v1.2M8 13.3v1.2M1.5 8h1.2M13.3 8h1.2M3.4 3.4l.85.85M11.75 11.75l.85.85M12.6 3.4l-.85.85M4.25 11.75l-.85.85" />
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M13.2 9.8A5.5 5.5 0 0 1 6.2 2.8a5.5 5.5 0 1 0 7 7Z" />
+          </svg>
+        </button>
+        <button class="icon-btn" id="fullscreenBtn" type="button" aria-label="Pantalla completa (Tecla F)" title="Pantalla completa (F)">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M2.5 5.5v-3h3M10.5 2.5h3v3M13.5 10.5v3h-3M5.5 13.5h-3v-3" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Slide Stage -->
+  <main class="deck-stage" id="deckStage">
+    <!-- ============================================================
+         SLIDE 1: PRESENTACIÓN (Portada) — Estudiante 1
+         ============================================================ -->
+    <section class="slide is-active" data-slide="1" data-title="Presentación" data-speaker="1">
+      <div class="slide-inner slide-cover">
+        <div class="cover-hero">
+          <p class="eyebrow mono">00 // PORTADA DEL PROYECTO</p>
+          <h1 class="hero-title">Taller Módulo MLP Regresión Clasificación</h1>
+          <p class="hero-subtitle">
+            Aprendizaje Automático Avanzado · Universidad Autónoma de Occidente (UAO) — Especialización IA
+          </p>
+        </div>
+
+        <div class="cover-team">
+          <div class="team-label mono">INFORMACIÓN DEL PROYECTO Y AUTORES</div>
+          <div class="team-grid">
+            <article class="presenter-card" data-speaker-card="1">
+              <div class="presenter-top">
+                <span class="speaker-badge s1">Estudiante 1</span>
+              </div>
+              <h2 class="presenter-name">Carolina Dorado</h2>
+            </article>
+
+            <article class="presenter-card" data-speaker-card="2">
+              <div class="presenter-top">
+                <span class="speaker-badge s2">Estudiante 2</span>
+              </div>
+              <h2 class="presenter-name">Roberto Baez</h2>
+            </article>
+
+            <article class="presenter-card" data-speaker-card="3">
+              <div class="presenter-top">
+                <span class="speaker-badge s3">Estudiante 3</span>
+              </div>
+              <h2 class="presenter-name">Jorge Cifuentes</h2>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- ============================================================
+         SLIDE 2: INTRODUCCIÓN I (FUNDAMENTOS MLP) — Estudiante 1
+         ============================================================ -->
+    <section class="slide" data-slide="2" data-title="Introducción · MLP" data-speaker="1">
+      <div class="slide-inner">
+        <div class="slide-header">
+          <div class="slide-kicker">
+            <span class="mono accent-cyan">01 // INTRODUCCIÓN · FUNDAMENTOS MLP</span>
+            <span class="kicker-sep">·</span>
+            <span class="muted">Conceptos base y aprendizaje supervisado</span>
+          </div>
+          <h2 class="slide-title">¿Qué es una MLP Superficial y Qué Tareas Resuelve?</h2>
+        </div>
+
+        <div class="layout-split-60-40">
+          <div class="col-stack">
+            <article class="card card-elevated">
+              <div class="card-label mono">PERCEPTRÓN MULTICAPA (MULTILAYER PERCEPTRON)</div>
+              <ul class="concept-list">
+                <li>
+                  <span class="concept-tag mono">DEFINICIÓN</span>
+                  <span>Red neuronal artificial de nodos conectados entre sí, donde los datos fluyen de entrada a salida para aprender patrones complejos.</span>
+                </li>
+                <li>
+                  <span class="concept-tag mono">CAPAS OCULTAS</span>
+                  <span>Capas intermedias donde ocurre el procesamiento matemático real: extraen y combinan características de los datos.</span>
+                </li>
+                <li>
+                  <span class="concept-tag mono">&iquest;SUPERFICIAL?</span>
+                  <span>Usa <strong>1 o 2 capas ocultas</strong> (vs. decenas en <em>Deep Learning</em>): entrena más rápido, requiere menos datos y evita complejidad innecesaria en datos tabulares.</span>
+                </li>
+              </ul>
+              <div class="theorem-callout compact-callout">
+                <div class="theorem-head">
+                  <span class="mono accent-cyan">TEOREMA DE APROXIMACIÓN UNIVERSAL</span>
+                  <span class="mono muted">Cybenko, 1989 · Hornik, 1991</span>
+                </div>
+                <p class="theorem-body">
+                  Una capa oculta finita aproxima cualquier función continua en <strong>&#8477;&#8319;</strong>, pero garantiza <strong>existencia funcional, no convergencia</strong> del gradiente.
+                </p>
+              </div>
+            </article>
+
+            <div class="grid-2">
+              <article class="card card-highlight-cyan">
+                <div class="task-head">
+                  <span class="mini-index mono">APRENDIZAJE SUPERVISADO</span>
+                  <span class="dataset-badge mono cyan">Etiqueta</span>
+                </div>
+                <h3 class="card-title">Clasificación Binaria</h3>
+                <p class="card-desc">
+                  Asignar una de dos clases posibles (ej. <em>aprobado / rechazado</em>).
+                </p>
+              </article>
+
+              <article class="card card-highlight-violet">
+                <div class="task-head">
+                  <span class="mini-index mono accent-violet">APRENDIZAJE SUPERVISADO</span>
+                  <span class="dataset-badge mono violet">Magnitud</span>
+                </div>
+                <h3 class="card-title">Regresión Continua</h3>
+                <p class="card-desc">
+                  Estimar una magnitud numérica continua (ej. <em>costo, distancia</em>).
+                </p>
+              </article>
+            </div>
+          </div>
+
+          <aside class="intro-diagram-card" aria-label="Esquema del diseño experimental MLP">
+            <div class="slot-header">
+              <span class="mono">DISEÑO EXPERIMENTAL</span>
+              <span class="slot-badge">Matriz 3 &times; 3</span>
+            </div>
+
+            <div class="intro-diagram-body">
+              <!-- Compact SVG Neural Topology -->
+              <div class="mlp-svg-box">
+                <svg viewBox="0 0 280 96" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <!-- Connections -->
+                  <g stroke="currentColor" stroke-opacity="0.22" stroke-width="1">
+                    <line x1="42" y1="22" x2="112" y2="18" />
+                    <line x1="42" y1="22" x2="112" y2="48" />
+                    <line x1="42" y1="22" x2="112" y2="78" />
+                    <line x1="42" y1="48" x2="112" y2="18" />
+                    <line x1="42" y1="48" x2="112" y2="48" />
+                    <line x1="42" y1="48" x2="112" y2="78" />
+                    <line x1="42" y1="74" x2="112" y2="18" />
+                    <line x1="42" y1="74" x2="112" y2="48" />
+                    <line x1="42" y1="74" x2="112" y2="78" />
+
+                    <line x1="112" y1="18" x2="178" y2="28" />
+                    <line x1="112" y1="18" x2="178" y2="68" />
+                    <line x1="112" y1="48" x2="178" y2="28" />
+                    <line x1="112" y1="48" x2="178" y2="68" />
+                    <line x1="112" y1="78" x2="178" y2="28" />
+                    <line x1="112" y1="78" x2="178" y2="68" />
+
+                    <line x1="178" y1="28" x2="238" y2="48" />
+                    <line x1="178" y1="68" x2="238" y2="48" />
+                  </g>
+
+                  <!-- Input Nodes -->
+                  <circle cx="42" cy="22" r="5" fill="var(--bg-surface)" stroke="var(--text-secondary)" stroke-width="1.5" />
+                  <circle cx="42" cy="48" r="5" fill="var(--bg-surface)" stroke="var(--text-secondary)" stroke-width="1.5" />
+                  <circle cx="42" cy="74" r="5" fill="var(--bg-surface)" stroke="var(--text-secondary)" stroke-width="1.5" />
+
+                  <!-- Hidden Layer 1 -->
+                  <circle cx="112" cy="18" r="6" fill="var(--bg-surface)" stroke="var(--accent-cyan)" stroke-width="1.8" />
+                  <circle cx="112" cy="48" r="6" fill="var(--bg-surface)" stroke="var(--accent-cyan)" stroke-width="1.8" />
+                  <circle cx="112" cy="78" r="6" fill="var(--bg-surface)" stroke="var(--accent-cyan)" stroke-width="1.8" />
+
+                  <!-- Hidden Layer 2 (optional <= 2) -->
+                  <circle cx="178" cy="28" r="6" fill="var(--bg-surface)" stroke="var(--accent-violet)" stroke-width="1.8" stroke-dasharray="2.5 2" />
+                  <circle cx="178" cy="68" r="6" fill="var(--bg-surface)" stroke="var(--accent-violet)" stroke-width="1.8" stroke-dasharray="2.5 2" />
+
+                  <!-- Output Node -->
+                  <circle cx="238" cy="48" r="7" fill="var(--bg-surface)" stroke="var(--accent-emerald)" stroke-width="2" />
+                </svg>
+                <div class="mlp-legend mono">
+                  <span>Entrada X</span>
+                  <span class="accent-cyan">Oculta 1</span>
+                  <span class="accent-violet">(Oculta 2)</span>
+                  <span class="accent-emerald">Salida &ycirc;</span>
+                </div>
+              </div>
+
+              <div class="matrix-section">
+                <div class="matrix-row">
+                  <span class="matrix-label mono">3 ARQUITECTURAS</span>
+                  <span class="matrix-value">Variación en profundidad (&le; 2 capas) y anchura</span>
+                </div>
+                <div class="matrix-cross mono">&times;</div>
+                <div class="matrix-row">
+                  <span class="matrix-label mono">3 OPTIMIZADORES</span>
+                  <div class="opt-pills">
+                    <span class="opt-pill mono">Adam</span>
+                    <span class="opt-pill mono">RMSprop</span>
+                    <span class="opt-pill mono">SGD + Momentum</span>
+                  </div>
+                </div>
+                <div class="matrix-total mono">
+                  3 &times; 3 = <strong>9 configuraciones por tarea</strong> &middot; <strong>18 modelos</strong>
+                </div>
+              </div>
+
+              <div class="eval-footer">
+                <span class="mono muted">EVALUACIÓN EN TEST AISLADO:</span>
+                <div class="eval-tags">
+                  <span class="eval-tag">Convergencia</span>
+                  <span class="eval-tag">Estabilidad</span>
+                  <span class="eval-tag">Generalización</span>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+    <!-- ============================================================
+         SLIDE 3: INTRODUCCIÓN II (OBJETIVO, OPTIMIZADORES Y VALIDACIÓN) — Estudiante 1
+         ============================================================ -->
+    <section class="slide" data-slide="3" data-title="Introducción · Metodología" data-speaker="1">
+      <div class="slide-inner">
+        <div class="slide-header">
+          <div class="slide-kicker">
+            <span class="mono accent-cyan">02 // INTRODUCCIÓN · METODOLOGÍA EXPERIMENTAL</span>
+            <span class="kicker-sep">·</span>
+            <span class="muted">Objetivo, optimizadores y validación rigurosa</span>
+          </div>
+          <h2 class="slide-title">Objetivo General, Optimizadores y Validación Aislada</h2>
+        </div>
+
+        <article class="card card-highlight-cyan objective-banner">
+          <span class="mono objective-badge">OBJETIVO GENERAL</span>
+          <p class="body-copy">
+            Comparar el rendimiento cruzado de <strong>3 arquitecturas</strong> (variando anchura y profundidad hasta 2 capas) con <strong>3 algoritmos de optimización</strong> para medir su <strong>velocidad de aprendizaje</strong> y <strong>precisión</strong>.
+          </p>
+        </article>
+
+        <div class="section-subtitle mono">LOS 3 OPTIMIZADORES · &iquest;CÓMO APRENDE LA RED?</div>
+        <div class="grid-3">
+          <article class="card card-elevated">
+            <div class="task-head">
+              <span class="mini-index mono">01 · INERCIA</span>
+              <span class="dataset-badge mono cyan">Clásico + Momentum</span>
+            </div>
+            <h3 class="card-title">SGD con Momentum</h3>
+            <p class="card-desc">
+              Descenso de gradiente tradicional que añade <strong>&ldquo;inercia&rdquo;</strong> de pasos previos para avanzar más rápido y evitar atascarse en mínimos locales.
+            </p>
+          </article>
+
+          <article class="card card-elevated">
+            <div class="task-head">
+              <span class="mini-index mono accent-violet">02 · ADAPTATIVO</span>
+              <span class="dataset-badge mono violet">Por parámetro</span>
+            </div>
+            <h3 class="card-title">RMSprop</h3>
+            <p class="card-desc">
+              Adapta la velocidad de aprendizaje individualmente por parámetro: frena en pendientes pronunciadas y acelera en zonas planas.
+            </p>
+          </article>
+
+          <article class="card card-elevated">
+            <div class="task-head">
+              <span class="mini-index mono accent-emerald">03 · HÍBRIDO</span>
+              <span class="dataset-badge mono emerald">Estándar actual</span>
+            </div>
+            <h3 class="card-title">Adam</h3>
+            <p class="card-desc">
+              Combina lo mejor de ambos mundos (<strong>momentum + tasas adaptativas</strong>). Estándar moderno por su rapidez y estabilidad.
+            </p>
+          </article>
+        </div>
+
+        <article class="card validation-card">
+          <div class="validation-grid">
+            <div class="validation-info">
+              <div class="card-label mono accent-emerald">VALIDACIÓN RIGUROSA · DATOS DE PRUEBA AISLADOS</div>
+              <div class="val-points">
+                <p class="body-copy">
+                  <strong>&iquest;Qué significa?</strong> Separar un porcentaje de los datos desde el inicio y <strong>no mostrarlos nunca</strong> durante el entrenamiento.
+                </p>
+                <p class="body-copy">
+                  <strong>Propósito:</strong> Garantizar que la red realmente aprendió a <strong>generalizar</strong> y no memorizó las respuestas (<em>overfitting</em>).
+                </p>
+              </div>
+            </div>
+
+            <div class="split-visual" aria-label="Esquema de partición Train y Test aislado">
+              <div class="split-bar">
+                <div class="split-train">
+                  <span class="mono">ENTRENAMIENTO / VAL</span>
+                  <span class="split-sub">Ajuste de pesos</span>
+                </div>
+                <div class="split-test">
+                  <span class="mono">TEST AISLADO</span>
+                  <span class="split-sub">Evaluación final</span>
+                </div>
+              </div>
+              <span class="mono muted split-note">Aislamiento estricto: cero fuga de datos (data leakage)</span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+    <!-- ============================================================
+         SLIDE 4: PLANTEAMIENTO DEL PROBLEMA (3.1 CLASIFICACIÓN) — Estudiante 1
+         ============================================================ -->
+    <section class="slide" data-slide="4" data-title="Problema 3.1 · Clasificación" data-speaker="1">
+      <div class="slide-inner">
+        <div class="slide-header">
+          <div class="slide-kicker">
+            <span class="mono accent-cyan">03 // PLANTEAMIENTO 3.1 · CLASIFICACIÓN</span>
+            <span class="kicker-sep">·</span>
+            <span class="muted">UCI Machine Learning Repository (ID: 545)</span>
+          </div>
+          <h2 class="slide-title">Rice Dataset: Clasificación Morfológica de Arroz</h2>
+        </div>
+
+        <div class="layout-split-45-55">
+          <div class="col-stack">
+            <article class="card card-highlight-cyan">
+              <div class="task-head">
+                <span class="card-label mono">TAREA 01 · CLASIFICACIÓN BINARIA</span>
+                <span class="dataset-badge mono cyan">UCI ID: 545</span>
+              </div>
+              <p class="body-copy">
+                Discriminación morfológica no destructiva entre variedades de arroz en Turquía (<em>Cammeo</em> vs. <em>Osmancik</em>) con diferencias sutiles a simple vista; exige <strong>clasificación no lineal</strong> por visión artificial.
+              </p>
+
+              <!-- Ilustración SVG ampliada con las 7 variables morfológicas -->
+              <div class="mini-svg-panel mini-svg-panel-lg">
+                <svg viewBox="0 0 380 165" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <!-- Bounding Box (Extent) -->
+                  <rect x="82" y="42" width="192" height="80" rx="2" stroke="var(--text-muted)" stroke-width="1" stroke-dasharray="3 3" />
+
+                  <!-- Convex Hull (Convex_Area) -->
+                  <polygon points="82,82 96,52 140,42 216,42 260,54 274,82 260,110 216,122 140,122 96,112" stroke="var(--accent-emerald)" stroke-width="1" stroke-dasharray="2.5 2.5" stroke-opacity="0.8" />
+
+                  <!-- Rice Grain Contour (Perimeter & Area) -->
+                  <path d="M84 82 C84 56, 126 44, 178 44 C230 44, 272 58, 272 82 C272 106, 230 120, 178 120 C126 120, 84 108, 84 82 Z" fill="rgba(34, 211, 238, 0.10)" stroke="var(--accent-cyan)" stroke-width="2" />
+
+                  <!-- Major Axis -->
+                  <line x1="84" y1="82" x2="272" y2="82" stroke="var(--text-primary)" stroke-width="1.15" stroke-dasharray="4 2.5" />
+
+                  <!-- Minor Axis -->
+                  <line x1="178" y1="44" x2="178" y2="120" stroke="var(--accent-violet)" stroke-width="1.15" stroke-dasharray="3 2" />
+
+                  <!-- Eccentricity Foci -->
+                  <circle cx="122" cy="82" r="2.6" fill="var(--accent-amber)" />
+                  <circle cx="234" cy="82" r="2.6" fill="var(--accent-amber)" />
+
+                  <!-- Leader Lines -->
+                  <path d="M54 24 L82 42" stroke="var(--text-muted)" stroke-width="0.9" />
+                  <path d="M178 44 L196 22" stroke="var(--accent-violet)" stroke-width="0.9" />
+                  <path d="M250 56 L286 44" stroke="var(--accent-cyan)" stroke-width="0.9" />
+                  <path d="M272 82 L292 104" stroke="var(--text-primary)" stroke-width="0.9" stroke-opacity="0.7" />
+                  <path d="M214 122 L214 143" stroke="var(--accent-emerald)" stroke-width="0.9" />
+                  <path d="M122 85 L80 143" stroke="var(--accent-amber)" stroke-width="0.9" />
+
+                  <!-- 7 Variable Labels -->
+                  <text x="8" y="21" fill="var(--text-secondary)" font-size="9" font-family="var(--font-mono)">07 Extent (Box)</text>
+                  <text x="200" y="21" fill="var(--accent-violet)" font-size="9" font-family="var(--font-mono)">04 Minor_Axis_Length</text>
+                  <text x="289" y="46" fill="var(--accent-cyan)" font-size="9" font-family="var(--font-mono)">02 Perimeter</text>
+                  <text x="108" y="72" fill="var(--text-primary)" font-size="9.5" font-weight="600" font-family="var(--font-mono)">01 Area</text>
+                  <text x="282" y="116" fill="var(--text-primary)" font-size="9" font-family="var(--font-mono)">03 Major_Axis</text>
+                  <text x="180" y="154" fill="var(--accent-emerald)" font-size="9" font-family="var(--font-mono)">06 Convex_Area</text>
+                  <text x="8" y="154" fill="var(--accent-amber)" font-size="9" font-family="var(--font-mono)">05 Eccentricity</text>
+                </svg>
+              </div>
+            </article>
+
+            <div class="problem-stats">
+              <div class="stat-box">
+                <span class="stat-val mono accent-cyan">3.810</span>
+                <span class="stat-lbl">Filas (8 cols: 7+1)</span>
+              </div>
+              <div class="stat-box">
+                <span class="stat-val mono accent-emerald">0 nulos</span>
+                <span class="stat-lbl">100% completo</span>
+              </div>
+              <div class="stat-box">
+                <span class="stat-val mono">57,2 / 42,8%</span>
+                <span class="stat-lbl">Balance de clases</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-stack">
+            <article class="card">
+              <div class="card-label mono">VARIABLES DE ENTRADA (7 MORFOLÓGICAS CONTINUAS · 0 NULOS)</div>
+              <ul class="feature-list two-col">
+                <li>
+                  <span class="feat-idx mono">01</span>
+                  <div class="feat-main">
+                    <div class="feat-top"><code class="feat-name">Area</code><span class="feat-unit mono">&mu;m&sup2;</span></div>
+                    <span class="feat-desc">Píxeles dentro del límite del grano.</span>
+                  </div>
+                </li>
+                <li>
+                  <span class="feat-idx mono">02</span>
+                  <div class="feat-main">
+                    <div class="feat-top"><code class="feat-name">Perimeter</code><span class="feat-unit mono">&mu;m</span></div>
+                    <span class="feat-desc">Longitud del borde del grano.</span>
+                  </div>
+                </li>
+                <li>
+                  <span class="feat-idx mono">03</span>
+                  <div class="feat-main">
+                    <div class="feat-top"><code class="feat-name">Major_Axis_Length</code><span class="feat-unit mono">&mu;m</span></div>
+                    <span class="feat-desc">Eje principal del elipsoide.</span>
+                  </div>
+                </li>
+                <li>
+                  <span class="feat-idx mono">04</span>
+                  <div class="feat-main">
+                    <div class="feat-top"><code class="feat-name">Minor_Axis_Length</code><span class="feat-unit mono">&mu;m</span></div>
+                    <span class="feat-desc">Eje menor del elipsoide.</span>
+                  </div>
+                </li>
+                <li>
+                  <span class="feat-idx mono">05</span>
+                  <div class="feat-main">
+                    <div class="feat-top"><code class="feat-name">Eccentricity</code></div>
+                    <span class="feat-desc">Excentricidad / esfericidad.</span>
+                  </div>
+                </li>
+                <li>
+                  <span class="feat-idx mono">06</span>
+                  <div class="feat-main">
+                    <div class="feat-top"><code class="feat-name">Convex_Area</code></div>
+                    <span class="feat-desc">Área del polígono convexo mínimo.</span>
+                  </div>
+                </li>
+                <li class="span-full">
+                  <span class="feat-idx mono">07</span>
+                  <div class="feat-main">
+                    <div class="feat-top"><code class="feat-name">Extent</code></div>
+                    <span class="feat-desc">Razón entre el área del grano y el <em>bounding box</em>.</span>
+                  </div>
+                </li>
+              </ul>
+            </article>
+
+            <article class="target-box target-cyan target-stacked">
+              <div class="target-top-row">
+                <span class="mono target-label">TARGET BINARIO · <code class="feat-name">Class</code></span>
+                <span class="mono target-counts">Osmancik: <strong>2.180 (57,22%)</strong> &nbsp;|&nbsp; Cammeo: <strong>1.630 (42,78%)</strong></span>
+              </div>
+              <div class="class-bar" aria-label="Proporción de clases: 57,22% Osmancik y 42,78% Cammeo">
+                <span class="class-bar-a" style="width: 57.22%"></span>
+                <span class="class-bar-b" style="width: 42.78%"></span>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- ============================================================
+         SLIDE 5: CLASIFICACIÓN ML I (DATOS Y PARTICIÓN) — Estudiante 2
+         ============================================================ -->
+    <section class="slide" data-slide="5" data-title="Clasificación · Datos" data-speaker="2">
+      <div class="slide-inner">
+        <div class="slide-header">
+          <div class="slide-kicker">
+            <span class="mono accent-cyan">04 // CLASIFICACIÓN ML · PREPROCESAMIENTO Y DISEÑO</span>
+            <span class="kicker-sep">·</span>
+            <span class="muted">Estudiante 2 · Roberto Baez</span>
+          </div>
+          <h2 class="slide-title">Metodología de Clasificación: Datos y Arquitecturas MLP</h2>
+          <p class="slide-subtitle">
+            Partición rigurosa y espacio experimental factorial (<strong>3 Arquitecturas &times; 3 Optimizadores = 9 Modelos</strong>)
+          </p>
+        </div>
+
+        <div class="layout-split-40-60">
+          <div class="col-stack">
+            <article class="card card-elevated">
+              <div class="card-label mono">PREPARACIÓN Y PARTICIÓN DE LOS DATOS</div>
+              <div class="prep-item">
+                <span class="concept-tag mono">CODIFICACIÓN</span>
+                <p class="body-copy">
+                  Mapeo binario (<code class="feat-name">Cammeo: 0</code>, <code class="feat-name">Osmancik: 1</code>) y estandarización de las <strong>7 características</strong> de entrada.
+                </p>
+              </div>
+            </article>
+
+            <article class="card card-highlight-cyan">
+              <div class="task-head">
+                <span class="card-label mono">DIVISIÓN ESTRATIFICADA</span>
+                <span class="dataset-badge mono cyan">3.810 muestras</span>
+              </div>
+
+              <!-- Visual 70 / 15 / 15 Stratified Split Bar -->
+              <div class="split-3bar" aria-label="División estratificada: 70% entrenamiento, 15% validación, 15% prueba aislada">
+                <div class="s3-train mono" style="width: 70%">70%</div>
+                <div class="s3-val mono" style="width: 15%">15%</div>
+                <div class="s3-test mono" style="width: 15%">15%</div>
+              </div>
+
+              <ul class="partition-list">
+                <li>
+                  <span class="part-dot dot-cyan"></span>
+                  <div class="part-info">
+                    <div class="part-top">
+                      <strong>Entrenamiento (70%)</strong>
+                      <span class="mono part-count">2.667 muestras</span>
+                    </div>
+                    <span class="part-desc">Ajuste iterativo de pesos y gradientes.</span>
+                  </div>
+                </li>
+                <li>
+                  <span class="part-dot dot-violet"></span>
+                  <div class="part-info">
+                    <div class="part-top">
+                      <strong>Validación (15%)</strong>
+                      <span class="mono part-count">571 muestras</span>
+                    </div>
+                    <span class="part-desc">Monitoreo de curvas de pérdida y ajuste.</span>
+                  </div>
+                </li>
+                <li>
+                  <span class="part-dot dot-emerald"></span>
+                  <div class="part-info">
+                    <div class="part-top">
+                      <strong>Prueba Aislada (15%)</strong>
+                      <span class="mono part-count">572 muestras</span>
+                    </div>
+                    <span class="part-desc">Evaluación final sin sesgo ni fuga de datos.</span>
+                  </div>
+                </li>
+              </ul>
+            </article>
+          </div>
+
+          <aside class="col-stack" aria-label="Arquitecturas MLP diseñadas">
+            <!-- Diagrama de topología comparativa C1 vs C2 vs C3 -->
+            <aside class="arch-diagram-card" aria-label="Topología comparativa de arquitecturas C1, C2 y C3">
+              <div class="slot-header">
+                <span class="mono">TOPOLOGÍA COMPARATIVA · C1 vs. C2 vs. C3</span>
+                <span class="slot-badge">7 In &rarr; ReLU + Dropout &rarr; 1 Sigmoid</span>
+              </div>
+              <div class="arch-stack">
+                <article class="arch-card c1">
+                  <div class="arch-card-head">
+                    <div class="arch-card-id">
+                      <span class="arch-pill c1 mono">C1</span>
+                      <span class="arch-params mono">145 parámetros</span>
+                    </div>
+                    <span class="profile-tag">Modelo ligero · 1 capa oculta</span>
+                  </div>
+                  <div class="arch-flow">
+                    <span class="flow-node in mono">7<small>IN</small></span>
+                    <span class="flow-arrow" aria-hidden="true">&rarr;</span>
+                    <span class="flow-node hidden-cyan mono">16<small>ReLU · Drop 0.10</small></span>
+                    <span class="flow-arrow" aria-hidden="true">&rarr;</span>
+                    <span class="flow-node out mono">1<small>Sigmoid</small></span>
+                  </div>
+                </article>
+
+                <article class="arch-card c2">
+                  <div class="arch-card-head">
+                    <div class="arch-card-id">
+                      <span class="arch-pill c2 mono">C2</span>
+                      <span class="arch-params mono">801 parámetros</span>
+                    </div>
+                    <span class="profile-tag">Balanceado · 2 capas ocultas</span>
+                  </div>
+                  <div class="arch-flow">
+                    <span class="flow-node in mono">7<small>IN</small></span>
+                    <span class="flow-arrow" aria-hidden="true">&rarr;</span>
+                    <span class="flow-node hidden-violet mono">32<small>ReLU · Drop 0.10</small></span>
+                    <span class="flow-arrow" aria-hidden="true">&rarr;</span>
+                    <span class="flow-node hidden-violet mono">16<small>ReLU</small></span>
+                    <span class="flow-arrow" aria-hidden="true">&rarr;</span>
+                    <span class="flow-node out mono">1<small>Sigmoid</small></span>
+                  </div>
+                </article>
+
+                <article class="arch-card c3">
+                  <div class="arch-card-head">
+                    <div class="arch-card-id">
+                      <span class="arch-pill c3 mono">C3</span>
+                      <span class="arch-params mono">2.625 parámetros</span>
+                    </div>
+                    <span class="profile-tag">Alta capacidad · 2 capas + mayor Dropout</span>
+                  </div>
+                  <div class="arch-flow">
+                    <span class="flow-node in mono">7<small>IN</small></span>
+                    <span class="flow-arrow" aria-hidden="true">&rarr;</span>
+                    <span class="flow-node hidden-emerald mono">64<small>ReLU · Drop 0.20</small></span>
+                    <span class="flow-arrow" aria-hidden="true">&rarr;</span>
+                    <span class="flow-node hidden-emerald mono">32<small>ReLU</small></span>
+                    <span class="flow-arrow" aria-hidden="true">&rarr;</span>
+                    <span class="flow-node out mono">1<small>Sigmoid</small></span>
+                  </div>
+                </article>
+              </div>
+            </aside>
+          </aside>
+        </div>
+      </div>
+    </section>
+    <!-- ============================================================
+         SLIDE 6: CLASIFICACIÓN ML II (ARQUITECTURAS MLP) — Estudiante 2
+         ============================================================ -->
+    <section class="slide" data-slide="6" data-title="Resultados Experimentales: Clasificación de Arroz (Test Set)" data-speaker="2">
+      <div class="slide-inner">
+        <div class="slide-header">
+          <div class="slide-kicker">
+            <span class="mono accent-violet">05 // CLASIFICACIÓN ML · ARQUITECTURAS MLP</span>
+            <span class="kicker-sep">·</span>
+            <span class="muted">Estudiante 2 · Roberto Baez</span>
+          </div>
+          <h2 class="slide-title">Resultados Experimentales: Clasificación de Arroz (Test Set)</h2>
+          <p class="slide-subtitle">El modelo ligero C1 + Adam logra la mejor generalización (92.83% Accuracy)</p>
+        </div>
+
+        <div class="layout-split-55-45">
+          <div class="col-stack">
+            <article class="card card-elevated">
+              <div class="card-label mono">MODELO GANADOR</div>
+              <div class="card-title">C1_Adam · 1 Capa Oculta · 145 Parámetros</div>
+              <p class="card-desc">
+                Métricas globales (Test Set, 572 muestras): <strong>Accuracy 92.83%</strong>, <strong>F1-Score 0.9380</strong>, AUC-ROC 0.9827 (excelente capacidad discriminativa).
+              </p>
+              <div class="structured-list compact">
+                <li><span class="list-num mono">01</span><span>Osmancik: 310 aciertos / 17 errores — <strong>Recall 94.80%</strong>, F1 0.9380</span></li>
+                <li><span class="list-num mono">02</span><span>Cammeo: 221 aciertos / 24 errores — <strong>Precision 92.86%</strong>, F1 0.9151</span></li>
+              </div>
+            </article>
+
+            <article class="card card-elevated">
+              <div class="card-label mono">HALLAZGOS DEL EXPERIMENTO FACTORIAL (3 × 3)</div>
+              <div class="structured-list compact">
+                <li><span class="list-num mono">01</span><span><strong>Principio de parsimonia (C1 > C2 y C3)</strong>: la arquitectura de 1 sola capa (C1) superó a las de 2 capas (C2 y C3, 801 y 2.625 parámetros), evitando el sobreajuste en un dataset de 7 variables.</span></li>
+                <li><span class="list-num mono">02</span><span><strong>Estabilidad de convergencia</strong>: la curva de Loss muestra una caída abrupta en las primeras 10 épocas y una estabilización de entrenamiento y validación sin divergencia.</span></li>
+                <li><span class="list-num mono">03</span><span><strong>Comparativa de optimizadores</strong>: Adam lideró el rendimiento en C1 y C2, mientras que SGD con Momentum fue el más rápido por época pero obtuvo el menor F1-Score en arquitecturas profundas (0.9317).</span></li>
+              </div>
+            </article>
+          </div>
+
+          <aside class="visual-slot accent-violet-border" aria-label="Matriz comparativa de arquitecturas">
+            <div class="slot-header">
+              <span class="mono">MATRIZ · C1 vs C2 vs C3</span>
+              <span class="slot-badge">Arquitecturas MLP</span>
+            </div>
+            <div class="slot-body">
+              <img src="matriz.png" alt="Matriz comparativa de arquitecturas C1, C2 y C3" class="slot-image" />
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+    <!-- ============================================================
+         SLIDE 7: REGRESIÓN — Estudiante 3
+         ============================================================ -->
+    <section class="slide" data-slide="7" data-title="Regresión" data-speaker="3">
+      <div class="slide-inner">
+        <div class="slide-header">
+          <div class="slide-kicker">
+            <span class="mono accent-violet">06 // REGRESIÓN</span>
+            <span class="kicker-sep">·</span>
+            <span class="muted">Metodología, modelos y enfoque</span>
+          </div>
+          <h2 class="slide-title placeholder-text">[Modelado Predictivo y Enfoque de Regresión]</h2>
+        </div>
+
+        <div class="layout-split-55-45">
+          <div class="col-stack">
+            <article class="card card-highlight-violet">
+              <div class="card-label mono">FORMULACIÓN DEL MODELO DE REGRESIÓN</div>
+              <p class="body-placeholder">
+                [Descripción de la variable continua a estimar, transformaciones aplicadas (escalado, encoding) y criterio de selección de modelos.]
+              </p>
+              <div class="formula-slot mono">
+                [ y&#770; = f(X; &#952;) &nbsp;|&nbsp; Loss: MSE / Huber / MAE ]
+              </div>
+            </article>
+
+            <div class="grid-2">
+              <article class="card">
+                <div class="card-label mono">MODELOS EVALUADOS</div>
+                <ul class="structured-list compact">
+                  <li><span class="list-num mono">01</span><span class="placeholder-text">[Modelo base / Lineal]</span></li>
+                  <li><span class="list-num mono">02</span><span class="placeholder-text">[Modelo no lineal / MLP]</span></li>
+                </ul>
+              </article>
+              <article class="card">
+                <div class="card-label mono">CRITERIOS DE ERROR</div>
+                <div class="chip-row">
+                  <span class="chip-placeholder mono">[RMSE]</span>
+                  <span class="chip-placeholder mono">[MAE]</span>
+                  <span class="chip-placeholder mono">[R²]</span>
+                </div>
+              </article>
+            </div>
+          </div>
+
+          <aside class="visual-slot accent-violet-border" aria-label="Contenedor visual de regresión">
+            <div class="slot-header">
+              <span class="mono">VISUAL PLACEHOLDER · 06</span>
+              <span class="slot-badge">Arquitectura / Ajuste</span>
+            </div>
+            <div class="slot-body">
+              <div class="slot-wireframe">
+                <svg viewBox="0 0 120 80" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true">
+                  <path d="M16 64H106M16 64V14" />
+                  <path d="M20 56 C40 50, 62 34, 100 20" stroke-width="1.6" />
+                  <circle cx="28" cy="52" r="2.2" fill="currentColor" />
+                  <circle cx="46" cy="48" r="2.2" fill="currentColor" />
+                  <circle cx="64" cy="34" r="2.2" fill="currentColor" />
+                  <circle cx="82" cy="30" r="2.2" fill="currentColor" />
+                  <circle cx="96" cy="22" r="2.2" fill="currentColor" />
+                </svg>
+                <p class="slot-caption">[Espacio reservado para arquitectura del regresor, flujo de entrenamiento o esquema de ajuste continuo]</p>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+    <!-- ============================================================
+         SLIDE 8: RESULTADOS Y ANÁLISIS — Estudiante 1
+         ============================================================ -->
+    <section class="slide" data-slide="8" data-title="Resultados y Análisis" data-speaker="1">
+      <div class="slide-inner">
+        <div class="slide-header">
+          <div class="slide-kicker">
+            <span class="mono accent-emerald">07 // RESULTADOS Y ANÁLISIS</span>
+            <span class="kicker-sep">·</span>
+            <span class="muted">Métricas, gráficas y comparativas</span>
+          </div>
+          <h2 class="slide-title placeholder-text">[Desempeño Experimental y Análisis Comparativo]</h2>
+        </div>
+
+        <!-- KPI Summary Strip -->
+        <div class="kpi-strip">
+          <div class="kpi-card">
+            <span class="kpi-label mono">[MÉTRICA CLASIF. 1]</span>
+            <span class="kpi-value mono placeholder-text">--.- %</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label mono">[MÉTRICA CLASIF. 2]</span>
+            <span class="kpi-value mono placeholder-text">0.--</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label mono">[MÉTRICA REGRESIÓN 1]</span>
+            <span class="kpi-value mono placeholder-text">--.--</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label mono">[MÉTRICA REGRESIÓN 2]</span>
+            <span class="kpi-value mono placeholder-text">0.--</span>
+          </div>
+        </div>
+
+        <!-- Dual Chart / Table Containers -->
+        <div class="grid-2 charts-row">
+          <aside class="visual-slot compact-slot" aria-label="Contenedor gráfica A">
+            <div class="slot-header">
+              <span class="mono">GRÁFICA / TABLA A</span>
+              <span class="slot-badge">Clasificación</span>
+            </div>
+            <div class="slot-body">
+              <div class="slot-wireframe">
+                <svg viewBox="0 0 120 72" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true">
+                  <rect x="24" y="14" width="24" height="20" />
+                  <rect x="48" y="14" width="24" height="20" />
+                  <rect x="72" y="14" width="24" height="20" />
+                  <rect x="24" y="34" width="24" height="20" />
+                  <rect x="48" y="34" width="24" height="20" />
+                  <rect x="72" y="34" width="24" height="20" />
+                </svg>
+                <p class="slot-caption">[Contenedor para Matriz de Confusión, Curva ROC o Tabla comparativa de clasificadores]</p>
+              </div>
+            </div>
+          </aside>
+
+          <aside class="visual-slot compact-slot" aria-label="Contenedor gráfica B">
+            <div class="slot-header">
+              <span class="mono">GRÁFICA / TABLA B</span>
+              <span class="slot-badge">Regresión</span>
+            </div>
+            <div class="slot-body">
+              <div class="slot-wireframe">
+                <svg viewBox="0 0 120 72" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true">
+                  <path d="M18 58H102M18 58V12" />
+                  <rect x="28" y="36" width="12" height="22" />
+                  <rect x="48" y="24" width="12" height="34" />
+                  <rect x="68" y="30" width="12" height="28" />
+                  <rect x="88" y="18" width="12" height="40" />
+                </svg>
+                <p class="slot-caption">[Contenedor para gráfico Real vs. Predicho, Curvas de pérdida o Comparativa de residuales]</p>
+              </div>
+            </div>
+          </aside>
+        </div>
+
+        <div class="analysis-note card">
+          <span class="mono accent-emerald">INSIGHT PRINCIPAL</span>
+          <p class="placeholder-text">[Espacio para síntesis interpretativa: qué patrón explican las métricas y comparación entre modelos.]</p>
+        </div>
+      </div>
+    </section>
+    <!-- ============================================================
+         SLIDE 9: CONCLUSIONES — Estudiante 1
+         ============================================================ -->
+    <section class="slide" data-slide="9" data-title="Conclusiones" data-speaker="1">
+      <div class="slide-inner">
+        <div class="slide-header">
+          <div class="slide-kicker">
+            <span class="mono accent-emerald">08 // CONCLUSIONES</span>
+            <span class="kicker-sep">·</span>
+            <span class="muted">Hallazgos principales y cierre</span>
+          </div>
+          <h2 class="slide-title placeholder-text">[Síntesis de Hallazgos y Conclusiones]</h2>
+        </div>
+
+        <div class="grid-3">
+          <article class="card card-elevated">
+            <span class="conclusion-badge mono">HALLAZGO 01</span>
+            <h3 class="card-title placeholder-text">[Conclusión sobre Clasificación]</h3>
+            <p class="card-desc placeholder-text">
+              [Resumen del desempeño alcanzado, robustez frente a clases y aporte frente al problema planteado.]
+            </p>
+          </article>
+
+          <article class="card card-elevated">
+            <span class="conclusion-badge mono">HALLAZGO 02</span>
+            <h3 class="card-title placeholder-text">[Conclusión sobre Regresión]</h3>
+            <p class="card-desc placeholder-text">
+              [Resumen de la capacidad predictiva continua, margen de error y variables más influyentes.]
+            </p>
+          </article>
+
+          <article class="card card-elevated">
+            <span class="conclusion-badge mono">HALLAZGO 03</span>
+            <h3 class="card-title placeholder-text">[Validación de Hipótesis]</h3>
+            <p class="card-desc placeholder-text">
+              [Respuesta directa al objetivo general y aplicabilidad real de la solución propuesta.]
+            </p>
+          </article>
+        </div>
+
+        <div class="grid-2">
+          <article class="card">
+            <div class="card-label mono">LIMITACIONES IDENTIFICADAS</div>
+            <p class="body-placeholder">[Aspectos del dataset, sesgos, costo computacional o supuestos del modelo a considerar.]</p>
+          </article>
+          <article class="card card-highlight-emerald">
+            <div class="card-label mono">TRABAJO FUTURO Y CIERRE</div>
+            <p class="body-placeholder">[Líneas de mejora: nuevos algoritmos, ampliación de datos o despliegue en producción.]</p>
+          </article>
+        </div>
+      </div>
+    </section>
+    <!-- ============================================================
+         SLIDE 10: BIBLIOGRAFÍA — Estudiante 1
+         ============================================================ -->
+    <section class="slide" data-slide="10" data-title="Bibliografía" data-speaker="1">
+      <div class="slide-inner">
+        <div class="slide-header">
+          <div class="slide-kicker">
+            <span class="mono accent-emerald">09 // BIBLIOGRAFÍA</span>
+            <span class="kicker-sep">·</span>
+            <span class="muted">Referencias académicas y fuentes</span>
+          </div>
+          <h2 class="slide-title placeholder-text">[Referencias Bibliográficas y Fuentes Técnicas]</h2>
+        </div>
+
+        <div class="bib-list">
+          <article class="bib-item">
+            <span class="bib-index mono">[01]</span>
+            <div class="bib-content">
+              <span class="bib-tag mono">[Dataset / Fuente]</span>
+              <p class="placeholder-text">[Autor/Institución (Año). Título del conjunto de datos o reporte técnico. URL o repositorio.]</p>
+            </div>
+          </article>
+
+          <article class="bib-item">
+            <span class="bib-index mono">[02]</span>
+            <div class="bib-content">
+              <span class="bib-tag mono">[Paper / Libro]</span>
+              <p class="placeholder-text">[Apellido, N. (Año). Título del artículo o libro sobre Machine Learning / Clasificación. Revista / Editorial.]</p>
+            </div>
+          </article>
+
+          <article class="bib-item">
+            <span class="bib-index mono">[03]</span>
+            <div class="bib-content">
+              <span class="bib-tag mono">[Paper / Libro]</span>
+              <p class="placeholder-text">[Apellido, N. (Año). Referencia metodológica sobre modelos de Regresión / Redes Neuronales. DOI / Editorial.]</p>
+            </div>
+          </article>
+
+          <article class="bib-item">
+            <span class="bib-index mono">[04]</span>
+            <div class="bib-content">
+              <span class="bib-tag mono">[Framework]</span>
+              <p class="placeholder-text">[Documentación oficial de librerías utilizadas (ej. Scikit-learn, TensorFlow/PyTorch, Pandas).]</p>
+            </div>
+          </article>
+        </div>
+
+        <footer class="closing-bar">
+          <span class="mono muted">FIN DE LA PRESENTACIÓN · 10 / 10</span>
+          <span class="closing-qa placeholder-text">[Gracias por su atención · Espacio para preguntas]</span>
+        </footer>
+      </div>
+    </section>
+  </main>
+
+  <!-- Floating Discreet Navigation Controls -->
+  <nav class="nav-dock" aria-label="Controles de navegación">
+    <button class="nav-arrow" id="prevBtn" type="button" aria-label="Diapositiva anterior (Flecha izquierda)" title="Anterior (←)">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M10 3.5 5.5 8 10 12.5" />
+      </svg>
+    </button>
+
+    <div class="nav-dots" id="navDots" role="tablist" aria-label="Selector de diapositivas">
+      <!-- Populated dynamically from SLIDES_CONFIG in app.js -->
+    </div>
+
+    <button class="nav-arrow" id="nextBtn" type="button" aria-label="Siguiente diapositiva (Flecha derecha)" title="Siguiente (→)">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M6 3.5 10.5 8 6 12.5" />
+      </svg>
+    </button>
+  </nav>
+
+  <!-- Slide Overview Modal (Press G or click counter) -->
+  <div class="overview-modal" id="overviewModal" hidden role="dialog" aria-modal="true" aria-labelledby="overviewTitle">
+    <div class="overview-backdrop" id="overviewBackdrop"></div>
+    <div class="overview-panel">
+      <div class="overview-header">
+        <div>
+          <h2 id="overviewTitle">Mapa de la Presentación</h2>
+          <p class="muted">15 minutos · 3 estudiantes (5 min por bloque) · Atajos: ← → navegar, P cronómetro, R reiniciar, T tema, F pantalla completa</p>
+        </div>
+        <button class="icon-btn" id="closeOverviewBtn" type="button" aria-label="Cerrar mapa de diapositivas (Esc)">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+            <path d="M4 4l8 8M12 4l-8 8" />
+          </svg>
+        </button>
+      </div>
+      <div class="overview-grid" id="overviewGrid"></div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
+
